@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sélecteur de Variation Unicode - Outil professionnel pour générer du texte indétectable par les IA">
+    <title>Unicode Variation Selector - AI-Proof Text Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --surface-0: #f5f5f3;
+            --surface-1: #ebe9e0;
+            --surface-2: #fff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --text-muted: #999;
+            --border: #d0ccc0;
+            --border-strong: #999;
+            --fill-accent: #2563eb;
+            --fill-accent-hover: #1d4ed8;
+            --on-accent: #fff;
+            --bg-accent: #dbeafe;
+            --text-accent: #1e40af;
+            --radius: 8px;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --surface-0: #1a1a1a;
+                --surface-1: #2d2d2d;
+                --surface-2: #3d3d3d;
+                --text-primary: #f5f5f3;
+                --text-secondary: #999;
+                --text-muted: #666;
+                --border: #444;
+                --border-strong: #666;
+                --fill-accent: #3b82f6;
+                --fill-accent-hover: #2563eb;
+                --on-accent: #000;
+                --bg-accent: #1e3a8a;
+                --text-accent: #93c5fd;
+            }
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--surface-0);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .section {
+            margin-bottom: 24px;
+        }
+        
+        .section-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 14px;
+            background: var(--surface-2);
+            color: var(--text-primary);
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--border-strong);
+            box-shadow: 0 0 0 2px var(--bg-accent);
+        }
+        
+        .controls {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .control-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .control-row.full {
+            grid-template-columns: 1fr;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .slider-value {
+            font-size: 14px;
+            font-weight: 500;
+            min-width: 45px;
+            text-align: right;
+        }
+        
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface-1);
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--border-strong);
+        }
+        
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        @media (max-width: 600px) {
+            .strategy-grid { grid-template-columns: 1fr; }
+            .control-row { grid-template-columns: 1fr; }
+        }
+        
+        .strategy-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+        }
+        
+        .strategy-checkbox input {
+            cursor: pointer;
+        }
+        
+        .strategy-checkbox label {
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .preview-box {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .preview-text {
+            font-size: 15px;
+            line-height: 1.7;
+            word-break: break-word;
+            min-height: 80px;
+            padding: 12px;
+            background: var(--surface-1);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button.primary {
+            background: var(--fill-accent);
+            color: var(--on-accent);
+            border-color: var(--fill-accent);
+        }
+        
+        button.primary:hover {
+            background: var(--fill-accent-hover);
+        }
+        
+        button.secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border-color: var(--border-strong);
+        }
+        
+        button.secondary:hover {
+            background: var(--surface-1);
+        }
+        
+        .info-box {
+            background: var(--bg-accent);
+            border: 1px solid var(--text-accent);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-accent);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .footer a {
+            color: var(--text-accent);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Unicode Variation Selector</h1>
+            <p class="subtitle">Générez du texte indétectable par les IA avec 5 stratégies sophistiquées</p>
+        </div>
+        
+        <div class="section">
+            <div class="section-label">Votre texte</div>
+            <textarea id="inputText" placeholder="Entrez ou collez votre texte ici...">Bonjour ! C'est absolument incroyable ❤️ Vraiment naturel.</textarea>
+        </div>
+        
+        <div class="controls">
+            <div class="control-row full">
+                <div class="control-group">
+                    <div class="section-label">Intensité globale</div>
+                    <div class="slider-container">
+                        <input type="range" id="percentSlider" min="5" max="100" step="5" value="50" />
+                        <span class="slider-value"><span id="percentValue">50</span>%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-row full">
+                <div class="control-group">
+                    <div class="section-label">Contexte / Langue</div>
+                    <select id="contextSelect">
+                        <option value="neutral">Neutre</option>
+                        <option value="french" selected>Français</option>
+                        <option value="poetic">Poétique</option>
+                        <option value="technical">Technique / Code</option>
+                        <option value="editorial">Éditorial (Sans Filtre)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="control-row full">
+                <div class="control-group">
+                    <div class="section-label">Stratégies actives (sélectionnez 1-5)</div>
+                    <div class="strategy-grid">
+                        <div class="strategy-checkbox">
+                            <input type="checkbox" id="asymmetric" checked>
+                            <label for="asymmetric">1. Asymétrique</label>
+                        </div>
+                        <div class="strategy-checkbox">
+                            <input type="checkbox" id="bytype" checked>
+                            <label for="bytype">2. Par type</label>
+                        </div>
+                        <div class="strategy-checkbox">
+                            <input type="checkbox" id="zwsp" checked>
+                            <label for="zwsp">3. ZWSP</label>
+                        </div>
+                        <div class="strategy-checkbox">
+                            <input type="checkbox" id="normalization">
+                            <label for="normalization">4. Normalisation</label>
+                        </div>
+                        <div class="strategy-checkbox">
+                            <input type="checkbox" id="contextual" checked>
+                            <label for="contextual">5. Contextuel</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-box">
+            <div class="section-label">Résultat</div>
+            <div class="preview-text" id="previewText">Bonjour ! C'est absolument incroyable ❤️ Vraiment naturel.</div>
+        </div>
+        
+        <div class="button-group">
+            <button class="primary" onclick="mixVariations()">Générer</button>
+            <button class="secondary" onclick="copyResult()">Copier le résultat</button>
+        </div>
+        
+        <div class="info-box">
+            ✓ Chaque génération est unique • ✓ Indétectable par les détecteurs d'IA • ✓ Compatible tous navigateurs
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Unicode Variation Selector — Outil libre et gratuit | <a href="https://github.com/ElodiePapillon/unicode-variation-selector" target="_blank">GitHub</a></p>
+    </div>
+    
+    <script>
+        const VS_CODES = {
+            VS01: 0xFE00, VS02: 0xFE01, VS03: 0xFE02, VS04: 0xFE03,
+            VS15: 0xFE0E, VS16: 0xFE0F,
+            ZWJ: 0x200D, ZWSP: 0x200B
+        };
+        
+        function isEmoji(char) {
+            const code = char.charCodeAt(0);
+            return (code >= 0x1F300 && code <= 0x1F9FF) || (code >= 0x2600 && code <= 0x27BF);
+        }
+        
+        function isPunctuation(char) {
+            return /[!?.;:,«»""''""–—…]/.test(char);
+        }
+        
+        function isAccentedLatin(char) {
+            return /[àâäéèêëïîôöùûüœæçÀÂÄÉÈÊËÏÎÔÖÙÛÜŒÆÇ]/.test(char);
+        }
+        
+        function isSymbol(char) {
+            return /[+−×÷=≈<>©®™€¥£¢§†‡¶]/.test(char);
+        }
+        
+        function strategyAsymmetric(text, percent, variations) {
+            let result = '';
+            let clusterMode = Math.random() > 0.5;
+            let i = 0;
+            
+            while (i < text.length) {
+                if (clusterMode && Math.random() * 100 < percent) {
+                    const clusterSize = Math.floor(Math.random() * 6) + 3;
+                    for (let j = 0; j < clusterSize && i < text.length; j++) {
+                        const char = text[i];
+                        result += char + String.fromCharCode(variations[Math.floor(Math.random() * variations.length)]);
+                        i++;
+                    }
+                    clusterMode = false;
+                } else {
+                    result += text[i];
+                    i++;
+                    if (Math.random() > 0.8) clusterMode = true;
+                }
+            }
+            return result;
+        }
+        
+        function strategyByType(text, percent, variations, context) {
+            let result = '';
+            for (let char of text) {
+                if (Math.random() * 100 < percent) {
+                    let vs = variations[0];
+                    if (isEmoji(char)) vs = VS_CODES.VS16;
+                    else if (isPunctuation(char)) vs = VS_CODES.VS01;
+                    else if (isAccentedLatin(char)) vs = context === 'french' ? VS_CODES.VS02 : VS_CODES.VS03;
+                    else if (isSymbol(char)) vs = VS_CODES.VS04;
+                    else vs = variations[Math.floor(Math.random() * variations.length)];
+                    result += char + String.fromCharCode(vs);
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+        
+        function strategyZWSP(text, percent) {
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                result += text[i];
+                const nextChar = text[i + 1];
+                const isBeforePunctuation = nextChar && isPunctuation(nextChar);
+                const isBeforeSpace = nextChar === ' ';
+                if ((isBeforePunctuation || (isBeforeSpace && Math.random() > 0.7)) && Math.random() * 100 < percent * 0.5) {
+                    result += String.fromCharCode(VS_CODES.ZWSP);
+                }
+            }
+            return result;
+        }
+        
+        function strategyNormalization(text) {
+            return Math.random() > 0.5 ? text.normalize('NFD') : text.normalize('NFC');
+        }
+        
+        function strategyContextual(text, percent, variations, context) {
+            if (context === 'french') return strategyByType(text, percent, variations, 'french');
+            if (context === 'editorial') return strategyAsymmetric(text, percent * 0.8, [VS_CODES.VS16, VS_CODES.ZWJ]);
+            if (context === 'poetic') return strategyZWSP(text, percent);
+            return text;
+        }
+        
+        const slider = document.getElementById('percentSlider');
+        const inputText = document.getElementById('inputText');
+        const previewText = document.getElementById('previewText');
+        const percentValue = document.getElementById('percentValue');
+        const contextSelect = document.getElementById('contextSelect');
+        
+        slider.addEventListener('input', (e) => {
+            percentValue.textContent = e.target.value;
+            mixVariations();
+        });
+        
+        inputText.addEventListener('input', () => mixVariations());
+        contextSelect.addEventListener('change', () => mixVariations());
+        
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', () => mixVariations());
+        });
+        
+        function getVariations() {
+            return [VS_CODES.VS01, VS_CODES.VS02, VS_CODES.VS03, VS_CODES.VS16];
+        }
+        
+        function mixVariations() {
+            const text = inputText.value;
+            const percent = parseInt(slider.value);
+            const context = contextSelect.value;
+            const variations = getVariations();
+            
+            const useAsym = document.getElementById('asymmetric').checked;
+            const useByType = document.getElementById('bytype').checked;
+            const useZWSP = document.getElementById('zwsp').checked;
+            const useNorm = document.getElementById('normalization').checked;
+            const useContext = document.getElementById('contextual').checked;
+            
+            let result = text;
+            if (useContext) result = strategyContextual(result, percent, variations, context);
+            if (useAsym) result = strategyAsymmetric(result, percent * 0.6, variations);
+            if (useByType) result = strategyByType(result, percent, variations, context);
+            if (useZWSP) result = strategyZWSP(result, percent);
+            if (useNorm) result = strategyNormalization(result);
+            
+            previewText.textContent = result;
+            window.lastResult = result;
+        }
+        
+        function copyResult() {
+            if (window.lastResult) {
+                navigator.clipboard.writeText(window.lastResult).then(() => {
+                    const btn = event.target;
+                    const oldText = btn.textContent;
+                    btn.textContent = '✓ Copié !';
+                    setTimeout(() => { btn.textContent = oldText; }, 1500);
+                });
+            }
+        }
+        
+        mixVariations();
+    </script>
+</body>
+</html>
